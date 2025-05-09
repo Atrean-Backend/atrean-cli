@@ -25,23 +25,33 @@ jobs:
 
       - name: Build for Linux (amd64)
         run: |
-          GOOS=linux GOARCH=amd64 go build -o atrean-linux-amd64 .
+          BUILD_DATE=$(date -u +"%Y-%m-%d")
+          VERSION=${GITHUB_REF_NAME#v}
+          GOOS=linux GOARCH=amd64 go build -ldflags="-X 'github.com/Atrean-Backend/atrean-cli/cmd.Version=$VERSION' -X 'github.com/Atrean-Backend/atrean-cli/cmd.BuildDate=$BUILD_DATE'" -o atrean-linux-amd64 .
           
       - name: Build for Linux (arm64)
         run: |
-          GOOS=linux GOARCH=arm64 go build -o atrean-linux-arm64 .
+          BUILD_DATE=$(date -u +"%Y-%m-%d")
+          VERSION=${GITHUB_REF_NAME#v}
+          GOOS=linux GOARCH=arm64 go build -ldflags="-X 'github.com/Atrean-Backend/atrean-cli/cmd.Version=$VERSION' -X 'github.com/Atrean-Backend/atrean-cli/cmd.BuildDate=$BUILD_DATE'" -o atrean-linux-arm64 .
           
       - name: Build for macOS (amd64)
         run: |
-          GOOS=darwin GOARCH=amd64 go build -o atrean-darwin-amd64 .
+          BUILD_DATE=$(date -u +"%Y-%m-%d")
+          VERSION=${GITHUB_REF_NAME#v}
+          GOOS=darwin GOARCH=amd64 go build -ldflags="-X 'github.com/Atrean-Backend/atrean-cli/cmd.Version=$VERSION' -X 'github.com/Atrean-Backend/atrean-cli/cmd.BuildDate=$BUILD_DATE'" -o atrean-darwin-amd64 .
           
       - name: Build for macOS (arm64)
         run: |
-          GOOS=darwin GOARCH=arm64 go build -o atrean-darwin-arm64 .
+          BUILD_DATE=$(date -u +"%Y-%m-%d")
+          VERSION=${GITHUB_REF_NAME#v}
+          GOOS=darwin GOARCH=arm64 go build -ldflags="-X 'github.com/Atrean-Backend/atrean-cli/cmd.Version=$VERSION' -X 'github.com/Atrean-Backend/atrean-cli/cmd.BuildDate=$BUILD_DATE'" -o atrean-darwin-arm64 .
           
       - name: Build for Windows (amd64)
         run: |
-          GOOS=windows GOARCH=amd64 go build -o atrean-windows-amd64.exe .
+          BUILD_DATE=$(date -u +"%Y-%m-%d")
+          VERSION=${GITHUB_REF_NAME#v}
+          GOOS=windows GOARCH=amd64 go build -ldflags="-X 'github.com/Atrean-Backend/atrean-cli/cmd.Version=$VERSION' -X 'github.com/Atrean-Backend/atrean-cli/cmd.BuildDate=$BUILD_DATE'" -o atrean-windows-amd64.exe .
 
       - name: Create Release
         id: create_release

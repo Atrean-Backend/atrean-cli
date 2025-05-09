@@ -4,9 +4,16 @@ Copyright © 2025 NAME HERE <EMAIL ADDRESS>
 package cmd
 
 import (
+	"fmt"
 	"os"
 
 	"github.com/spf13/cobra"
+)
+
+// Version information
+var (
+	Version   = "0.1.0"
+	BuildDate = "2023-05-09"
 )
 
 // rootCmd represents the base command when called without any subcommands
@@ -18,9 +25,18 @@ It allows you to easily set up and manage the Docker containers needed to run At
 
 Get started with 'atrean setup' to create your environment files, then use
 'atrean setup start' to initialize your containers.`,
-	// Uncomment the following line if your bare application
-	// has an action associated with it:
-	// Run: func(cmd *cobra.Command, args []string) { },
+	// Handle version flag
+	Run: func(cmd *cobra.Command, args []string) {
+		// Check if version flag is set
+		versionFlag, _ := cmd.Flags().GetBool("version")
+		if versionFlag {
+			fmt.Printf("Atrean CLI version %s (built on %s)\n", Version, BuildDate)
+			return
+		}
+
+		// If no flags, show help
+		cmd.Help()
+	},
 }
 
 // Execute adds all child commands to the root command and sets flags appropriately.
@@ -38,4 +54,7 @@ func init() {
 	// will be global for your application.
 
 	// rootCmd.PersistentFlags().StringVar(&cfgFile, "config", "", "config file (default is $HOME/.atrean-cli.yaml)")
+
+	// Add version flag
+	rootCmd.Flags().BoolP("version", "v", false, "Print the version number of Atrean CLI")
 }

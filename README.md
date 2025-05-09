@@ -47,6 +47,7 @@ Both commands will start your Atrean containers in detached mode.
 - `atrean setup` - Create Docker Compose and environment files
 - `atrean setup start` - Start the Docker containers
 - `atrean up` - Alternative command to start the containers
+- `atrean --version` - Display the CLI version information
 
 ## Development
 
