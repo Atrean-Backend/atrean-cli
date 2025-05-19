@@ -3,6 +3,7 @@ package cmd
 import (
 	"fmt"
 	"os"
+	"runtime"
 
 	"github.com/spf13/cobra"
 )
@@ -11,18 +12,16 @@ func createFile(filename, content string) error {
 	return os.WriteFile(filename, []byte(content), 0644)
 }
 
-var setupCmd = &cobra.Command{
-	Use:   "setup",
-	Short: "Set up Docker Compose and .env file",
-	Run: func(cmd *cobra.Command, args []string) {
-		fmt.Println("Setting up your Atrean environment...")
+var (
+	arch = runtime.GOARCH
+)
 
-		dockerContent := `
+var dockerContentTemplate = `
 version: '3.8'
 
 services:
   atrean-backend:
-    image: aryanshaw542/atrean-backend:v1.0.0
+    image: aryanshaw542/%s
     container_name: atrean-backend
     restart: unless-stopped
     ports:
@@ -33,7 +32,7 @@ services:
       - hushl-network
 
   atrean-dbt-backend:
-    image: aryanshaw542/atrean-dbt-backend:latest
+    image: aryanshaw542/%s
     container_name: atrean-dbt-backend
     restart: unless-stopped
     ports:
@@ -46,7 +45,7 @@ services:
       - atrean-backend
 
   atrean-frontend:
-    image: aryanshaw542/atrean-ui:latest
+    image: aryanshaw542/%s
     container_name: atrean-ui
     restart: unless-stopped
     ports:
@@ -64,7 +63,8 @@ networks:
     driver: bridge
 
 `
-		envContent := `
+
+var envContent = `
 OPENAI_API_KEY=YOUR_OPENAI_API_KEY
 OPENAI_MODEL_NAME=gpt-4o
 
@@ -233,6 +233,30 @@ VITE_APP_OPENAI_API_KEY=YOUR_VITE_APP_OPENAI_API_KEY
 VITE_APP_CALENDLY_URL=YOUR_VITE_APP_CALENDLY_URL
 VITE_APP_IPINFO_KEY=YOUR_VITE_APP_IPINFO_KEY
 `
+
+var setupCmd = &cobra.Command{
+	Use:   "setup",
+	Short: "Set up Docker Compose and .env file",
+	Run: func(cmd *cobra.Command, args []string) {
+		fmt.Println("Setting up your Atrean environment...")
+
+		atreanBackendAMDArch64ImageName := "atrean-backend:amd64-v1.0.0"
+		atreanBackendARMArch64ImageName := "atrean-backend:v1.0.0"
+
+		atreanDbtBackendAMDArch64ImageName := "atrean-dbt-backend:amd64-v1.0.0"
+		atreanDbtBackendARMArch64ImageName := "atrean-dbt-backend:latest"
+
+		atreanFrontendAMDArch64ImageName := "atrean-ui:amd64-v1.0.0"
+		atreanFrontendARMArch64ImageName := "atrean-ui:latest"
+
+		var dockerContent string
+		fmt.Println("Architecture detected: ", arch)
+
+		if arch == "amd64" {
+			dockerContent = fmt.Sprintf(dockerContentTemplate, atreanBackendAMDArch64ImageName, atreanDbtBackendAMDArch64ImageName, atreanFrontendAMDArch64ImageName)
+		} else {
+			dockerContent = fmt.Sprintf(dockerContentTemplate, atreanBackendARMArch64ImageName, atreanDbtBackendARMArch64ImageName, atreanFrontendARMArch64ImageName)
+		}
 
 		if err := createFile("docker-compose.yml", dockerContent); err != nil {
 			fmt.Println("Failed to write docker-compose.yml:", err)
