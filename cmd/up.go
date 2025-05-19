@@ -2,6 +2,7 @@ package cmd
 
 import (
 	"fmt"
+	"os"
 	"os/exec"
 
 	"github.com/spf13/cobra"
@@ -14,10 +15,11 @@ var upCmd = &cobra.Command{
 		fmt.Println("Starting containers...")
 
 		dockerCmd := exec.Command("docker-compose", "up", "-d")
-		output, err := dockerCmd.CombinedOutput()
+		dockerCmd.Stdout = os.Stdout
+		dockerCmd.Stderr = os.Stderr
+		err := dockerCmd.Run()
 		if err != nil {
 			fmt.Printf("Error starting containers: %s\n", err)
-			fmt.Println(string(output))
 			return
 		}
 

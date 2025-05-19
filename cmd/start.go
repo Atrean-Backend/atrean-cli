@@ -5,6 +5,7 @@ package cmd
 
 import (
 	"fmt"
+	"os"
 	"os/exec"
 
 	"github.com/spf13/cobra"
@@ -13,7 +14,7 @@ import (
 // startCmd represents the start command
 var startCmd = &cobra.Command{
 	Use:   "start",
-	Short: "Start the Docker containers",
+	Short: "Start the Atrean services",
 	Long: `Start the Atrean services using docker-compose.
 This command runs docker-compose up to start all services defined
 in the docker-compose.yml file.`,
@@ -22,10 +23,11 @@ in the docker-compose.yml file.`,
 
 		// Run docker-compose up -d
 		dockerCmd := exec.Command("docker-compose", "up", "-d")
-		output, err := dockerCmd.CombinedOutput()
+		dockerCmd.Stdout = os.Stdout
+		dockerCmd.Stderr = os.Stderr
+		err := dockerCmd.Run()
 		if err != nil {
 			fmt.Printf("Error starting containers: %s\n", err)
-			fmt.Println(string(output))
 			return
 		}
 
