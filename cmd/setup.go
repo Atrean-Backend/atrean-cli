@@ -52,6 +52,9 @@ services:
       - "80:80"
     env_file:
       - .env
+    environment:
+      - VITE_APP_BASE_URL=http://atrean-backend:8000
+      - VITE_APP_CHAT_WEBSOCKET_URL=ws://atrean-backend:8000/chatv2/
     networks:
       - hushl-network
     depends_on:
@@ -246,8 +249,8 @@ var setupCmd = &cobra.Command{
 		atreanDbtBackendAMDArch64ImageName := "atrean-dbt-backend:amd64-v1.0.0"
 		atreanDbtBackendARMArch64ImageName := "atrean-dbt-backend:latest"
 
-		atreanFrontendAMDArch64ImageName := "atrean-ui:amd64-v1.0.0"
-		atreanFrontendARMArch64ImageName := "atrean-ui:latest"
+		atreanFrontendAMDArch64ImageName := "atrean-ui:amd64-v1.0.1"
+		atreanFrontendARMArch64ImageName := "atrean-ui:v1.0.1"
 
 		var dockerContent string
 		fmt.Println("Architecture detected: ", arch)
